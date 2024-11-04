@@ -22,7 +22,7 @@ export const meta: MetaFunction = () => {
 };
 
 type data = {
-  errorMsg?: string;
+  error?: string;
   url?: string;
 };
 
@@ -35,12 +35,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const img = formData.get("file");
   if (img instanceof File && img.size <= 0) {
     return json({
-      errorMsg: "No file was provided",
+      error: "No file was provided",
+    });
+  }
+  if (img instanceof File && img.size > 100 * 1024 * 1024) {
+    return json({
+      error: "File size exceeds 100 MB",
     });
   }
   if (!img) {
     return json({
-      errorMsg: "Something went wrong while uploading",
+      error: "Something went wrong while uploading",
     });
   }
   return json({
@@ -157,8 +162,8 @@ export default function Index() {
           </fetcher.Form>
           <div className="w-fit">
             {fetcher.data ? (
-              fetcher.data?.errorMsg ? (
-                <h2 className="text-red-400">{fetcher.data.errorMsg}</h2>
+              fetcher.data?.error ? (
+                <h2 className="text-red-400">{fetcher.data.error}</h2>
               ) : (
                 <p>
                   File has been uploaded and is available under the following
