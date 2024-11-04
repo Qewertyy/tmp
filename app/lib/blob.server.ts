@@ -1,19 +1,25 @@
 import type { UploadHandler } from "@remix-run/node";
+import mime from "mime";
 
 async function blobUpload(
   data: AsyncIterable<Uint8Array>,
-  filename: string | undefined
+  filename: string
 ): Promise<any> {
   const formData = new FormData();
   const chunks: Uint8Array[] = [];
+
   for await (const chunk of data) {
     chunks.push(chunk);
   }
-  formData.append("file", new Blob(chunks), filename);
+  const mimeType = mime.getType(filename) || "application/octet-stream";
+  const file = new File(chunks, filename, { type: mimeType });
+  formData.append("file", file);
+
   const response = await fetch("https://blob.qewertyy.dev/upload", {
     method: "POST",
     body: formData,
   });
+
   return await response.json();
 }
 
