@@ -13,6 +13,7 @@ import { useFetcher } from "@remix-run/react";
 import { blobUploadHandler } from "~/lib/blob.server";
 import React, { useState } from "react";
 import { useToast } from "~/components/hooks/useToast";
+import { useFilePaste } from "~/components/hooks/useFilePaste";
 
 export const meta: MetaFunction = () => {
   return [
@@ -74,6 +75,21 @@ export default function Index() {
     e.preventDefault();
     e.stopPropagation();
   };
+
+  useFilePaste({
+    onFilePaste: (file) => {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      const inputElement = document.getElementById(
+        "dropzone-file"
+      ) as HTMLInputElement;
+      inputElement.files = dataTransfer.files;
+      toast({
+        description: `Selected file: ${file.name}`,
+      });
+    },
+    fileTypes: ["image/*"],
+  });
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
