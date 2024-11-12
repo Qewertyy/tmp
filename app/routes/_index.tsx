@@ -88,7 +88,7 @@ export default function Index() {
         description: `Selected file: ${file.name}`,
       });
     },
-    fileTypes: ["image/*"],
+    fileTypes: ["image/*", "video/*", "audio/*", "application/pdf"],
   });
 
   const handleDrop = (e: React.DragEvent) => {
